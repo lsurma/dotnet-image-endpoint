@@ -1,4 +1,5 @@
 ﻿@page
+@using ImageEndpoint.Core
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -13,29 +14,13 @@
 
 <br />
 
-<img width="200" height="200" src="https://localhost:7117/blob/example.jpg?format=webp&type=resize&width=200&height=200" alt="Example image"/>
+<img width="200" height="200" src="@("https://localhost:7117/blob/example.jpg".WithImgConversion(200, 200, conversionType: ConversionType.Resize))" alt="Example image"/>
 
 <br />
-<img width="200" height="200" src="https://localhost:7117/blob/example.jpg?format=webp&type=crop&width=200&height=200" alt="Example image"/>
-
-<br />
-<img width="200" height="200" src="https://localhost:7117/blob/example.jpg?format=webp&type=fit&width=200&height=200" alt="Example image"/>
-
-<br />
-<img width="200" height="200" src="https://localhost:7117/blob/example.jpg?format=webp&type=cover&width=200&height=200" alt="Example image"/>
+<img width="200" height="200" src="@("https://localhost:7117/blob/example.jpg".WithImgConversion(200, 200))" alt="Example image"/>
 
 <br />
 <br />
 <br />
 
-
-<img width="200" height="100" src="https://localhost:7117/blob/example.jpg?format=webp&type=resize&width=200&height=100" alt="Example image"/>
-
-<br />
-<img width="200" height="100" src="https://localhost:7117/blob/example.jpg?format=webp&type=crop&width=200&height=100" alt="Example image"/>
-
-<br />
-<img width="200" height="100" src="https://localhost:7117/blob/example.jpg?format=webp&type=fit&width=200&height=100" alt="Example image"/>
-
-<br />
-<img width="200" height="100" src="https://localhost:7117/blob/example.jpg?format=webp&type=cover&width=200&height=100" alt="Example image"/>
+<img width="200" height="100" src="@("https://localhost:7117/blob/example.jpg".WithImgConversion(200, 100))" alt="Example image"/>

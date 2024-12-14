@@ -2,29 +2,29 @@
 
 namespace ImageEndpoint.Host.Razor;
 
-public class FileImageSourceRepository : IImageSourceRepository
+public class LocalDiskSourceImagesRepository : ImageRepositoryBase, ISourceImagesRepository
 {
     private readonly string _baseDirectory;
 
-    public FileImageSourceRepository(IWebHostEnvironment env)
+    public LocalDiskSourceImagesRepository(IWebHostEnvironment env)
     {
         _baseDirectory = Path.Combine(env.WebRootPath, "blobs/src");
     }
 
-    public async Task<Stream> GetFileContentByIdAsync(string fileId)
+    public async Task<Stream> GetFileContentAsync(ImageConversionArgs args, CancellationToken cancellationToken = default)
     {
-        var filePath = Path.Combine(_baseDirectory, $"{fileId}"); // Assuming files are stored with .txt extension
+        var filePath = Path.Combine(_baseDirectory, args.SourceImageId);
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException("File not found", filePath);
         }
 
         return File.OpenRead(filePath);
-    }
+    }  
     
-    public Task<bool> FileExistsAsync(string fileId)
+    public Task<bool> ExistsAsync(ImageConversionArgs args, CancellationToken cancellationToken = default)
     {
-        var filePath = Path.Combine(_baseDirectory, $"{fileId}"); // Assuming files are stored with .txt extension
+        var filePath = Path.Combine(_baseDirectory, args.SourceImageId);
         return Task.FromResult(File.Exists(filePath));
     }
 }

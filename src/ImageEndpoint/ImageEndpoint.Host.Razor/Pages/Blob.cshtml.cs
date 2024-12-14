@@ -6,69 +6,31 @@ namespace ImageEndpoint.Host.Razor.Pages;
 
 public class Blob : PageModel
 {
+    public IImageConverterHandler ImageConverterHandler { get; }
+    
     [FromRoute]
     public string Id { get; set; }
-    
-    [FromQuery]
-    public ImageConversionArgs ConversionArgs { get; set; }
-    
-    public IImageSourceRepository ImageSourceRepository { get; }
-    public ImageManipulator ImageManipulator { get; }
-    public IManipulatedImageRepository ManipulatedImageRepository { get; }
 
     public Blob(
-        IImageSourceRepository imageSourceRepository,
-        ImageManipulator imageManipulator,
-        IManipulatedImageRepository manipulatedImageRepository
+        IImageConverterHandler imageConverterHandler
     )
     {
-        ImageSourceRepository = imageSourceRepository;
-        ImageManipulator = imageManipulator;
-        ManipulatedImageRepository = manipulatedImageRepository;
+        ImageConverterHandler = imageConverterHandler;
     }
     
     public async Task<IActionResult> OnGetAsync()
     {
-        var exists = await ImageSourceRepository.FileExistsAsync(Id);
-        
-        if(!exists)
+        var args = ImageUrlEncoding.ImageConversionArgsFromUrl(Id, HttpContext.Request.Query);
+        var cancellationToken = HttpContext.RequestAborted;
+
+        try
         {
-            return NotFound();
+            var stream = await ImageConverterHandler.HandleAsync(args, cancellationToken);
+            return File(stream, ImageConversionArgs.ImageFileFormatToContentType(args.Format));
         }
-        
-        ConversionArgs.SourceImageId = Id;
-        var key = ImageManipulator.GetTaskKey(ConversionArgs);
-        
-        if(await ManipulatedImageRepository.FileExistsAsync(key))
-        {
-            var stream = await ManipulatedImageRepository.GetFileContentByIdAsync(key);
-            return File(stream, GetContentTypeFromFileName(ConversionArgs.Format), Id);
-        }
-        
-        var manipulationResult = await ImageManipulator.ConvertAsync(ConversionArgs, HttpContext.RequestAborted);
-        
-        if(!manipulationResult)
+        catch(Exception)
         {
             return BadRequest();
         }
-        
-        if(await ManipulatedImageRepository.FileExistsAsync(key))
-        {
-            var stream = await ManipulatedImageRepository.GetFileContentByIdAsync(key);
-            return File(stream, GetContentTypeFromFileName(ConversionArgs.Format), Id);
-        }
-        
-        return BadRequest();
-    }
-    
-    private string GetContentTypeFromFileName(ImageFileFormat id)
-    {
-        return id switch
-        {
-            ImageFileFormat.Jpeg => "image/jpeg",
-            ImageFileFormat.Png => "image/png",
-            ImageFileFormat.Webp => "image/webp",
-            _ => throw new ArgumentOutOfRangeException(nameof(id), id, null)
-        };
     }
 }

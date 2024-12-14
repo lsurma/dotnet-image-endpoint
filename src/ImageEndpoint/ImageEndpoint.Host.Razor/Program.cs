@@ -5,9 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddScoped<IImageSourceRepository, FileImageSourceRepository>();
-builder.Services.AddScoped<IManipulatedImageRepository,ManipulatedImageRepository>();
-builder.Services.AddScoped<ImageManipulator>();
+builder.Services.AddScoped<ISourceImagesRepository, LocalDiskSourceImagesRepository>();
+builder.Services.AddScoped<IConvertedImagesRepository,FileConvertedImagesRepository>();
+builder.Services.AddScoped<IImageConverter,ImageMagickImageConverter>();
+builder.Services.AddScoped<IImageConverterHandler,BasicImageConverterHandler>();
 
 var app = builder.Build();
 

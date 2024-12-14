@@ -2,47 +2,56 @@
 
 namespace ImageEndpoint.Host.Razor;
 
-public class ManipulatedImageRepository : IManipulatedImageRepository
+public class FileConvertedImagesRepository : ImageRepositoryBase, IConvertedImagesRepository
 {
     private readonly string _baseDirectory;
 
-    public ManipulatedImageRepository(IWebHostEnvironment env)
+    public FileConvertedImagesRepository(IWebHostEnvironment env)
     {
         _baseDirectory = Path.Combine(env.WebRootPath, "blobs/converted");
     }
     
-    public async Task<Stream> GetFileContentByIdAsync(string fileId)
+    public Task<Stream> GetFileContentAsync(ImageConversionArgs args, CancellationToken cancellationToken = default)
     {
-        var filePath = Path.Combine(_baseDirectory, $"{fileId}"); // Assuming files are stored with .txt extension
+        var filePath = Path.Combine(_baseDirectory, GetFilePath(args));
+        
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException("File not found", filePath);
         }
 
-        return File.OpenRead(filePath);
+        return Task.FromResult<Stream>(File.OpenRead(filePath));        
     }
     
-    public async Task<bool> SaveFileContentAsync(Stream fileStream, string fileId)
+    public Task<bool> SaveContentAsync(Stream fileStream, ImageConversionArgs args, CancellationToken cancellationToken = default)
     {
-        var filePath = Path.Combine(_baseDirectory, $"{fileId}"); // Assuming files are stored with .txt extension
-        EnsureDirectoryExists(Path.GetDirectoryName(filePath));
+        EnsureDirectoryExists(_baseDirectory);
         
-        await using var file = File.Create(filePath);
-        await fileStream.CopyToAsync(file);
+        var filePath = Path.Combine(_baseDirectory, GetFilePath(args));
         
-        return true;
+        using var file = File.Create(filePath);
+        fileStream.CopyTo(file);
+        
+        return Task.FromResult(true);
     }
     
-    public async Task DeleteFileAsync(string fileId)
+    public Task<bool> DeleteAsync(ImageConversionArgs args, CancellationToken cancellationToken = default)
     {
-        var filePath = Path.Combine(_baseDirectory, $"{fileId}"); // Assuming files are stored with .txt extension
-        File.Delete(filePath);
+        var filePath = Path.Combine(_baseDirectory, GetFilePath(args));
+        
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+            return Task.FromResult(true);
+        }
+        
+        return Task.FromResult(false);
     }
     
-    public async Task<bool> FileExistsAsync(string fileId)
+    public Task<bool> ExistsAsync(ImageConversionArgs args, CancellationToken cancellationToken = default)
     {
-        var filePath = Path.Combine(_baseDirectory, $"{fileId}"); // Assuming files are stored with .txt extension
-        return File.Exists(filePath);
+        var filePath = Path.Combine(_baseDirectory, GetFilePath(args));
+        return Task.FromResult(File.Exists(filePath));
     }
     
     private void EnsureDirectoryExists(string directoryPath)
