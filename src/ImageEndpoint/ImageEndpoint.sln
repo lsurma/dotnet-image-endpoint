@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageEndpoint.Host.Razor", "ImageEndpoint.Host.Razor\ImageEndpoint.Host.Razor.csproj", "{2358B534-8608-491C-A6B1-8E1FCE4F0542}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageEndpoint.Core", "ImageEndpoint.Core\ImageEndpoint.Core.csproj", "{115FDB66-9457-441C-A064-643BB1D0E380}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2358B534-8608-491C-A6B1-8E1FCE4F0542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2358B534-8608-491C-A6B1-8E1FCE4F0542}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2358B534-8608-491C-A6B1-8E1FCE4F0542}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2358B534-8608-491C-A6B1-8E1FCE4F0542}.Release|Any CPU.Build.0 = Release|Any CPU
+		{115FDB66-9457-441C-A064-643BB1D0E380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{115FDB66-9457-441C-A064-643BB1D0E380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{115FDB66-9457-441C-A064-643BB1D0E380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{115FDB66-9457-441C-A064-643BB1D0E380}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
