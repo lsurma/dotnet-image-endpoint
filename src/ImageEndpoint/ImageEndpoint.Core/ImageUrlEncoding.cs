@@ -21,8 +21,8 @@ public static class ImageUrlEncoding
         this string currentUrl, 
         int targetWidth, 
         int targetHeight, 
-        ImageFileFormat targetFormat = ImageFileFormat.Webp, 
         ConversionType conversionType = ConversionType.Cover,
+        ImageFileFormat? targetFormat = null, 
         int? quality = 100
     )
     {
@@ -30,7 +30,7 @@ public static class ImageUrlEncoding
         var parts = currentUrl.Split('/');
         var sourceImageId = parts[^1];
         
-        return UrlWithConversion(currentUrl,sourceImageId, targetWidth, targetHeight, targetFormat, conversionType, quality);
+        return UrlWithConversion(currentUrl,sourceImageId, targetWidth, targetHeight, conversionType, targetFormat, quality);
     }
     
     public static string WithImgConversion(
@@ -38,12 +38,12 @@ public static class ImageUrlEncoding
         string sourceImageId,
         int targetWidth, 
         int targetHeight, 
-        ImageFileFormat targetFormat = ImageFileFormat.Webp, 
         ConversionType conversionType = ConversionType.Cover,
+        ImageFileFormat? targetFormat = null, 
         int? quality = 100
     )
     {
-        return UrlWithConversion(currentUrl,sourceImageId, targetWidth, targetHeight, targetFormat, conversionType, quality);
+        return UrlWithConversion(currentUrl,sourceImageId, targetWidth, targetHeight, conversionType, targetFormat, quality);
     }
     
     public static string WithImgConversion(
@@ -51,12 +51,12 @@ public static class ImageUrlEncoding
         string sourceImageId,
         int targetWidth, 
         int targetHeight, 
-        ImageFileFormat targetFormat = ImageFileFormat.Webp, 
         ConversionType conversionType = ConversionType.Cover,
+        ImageFileFormat? targetFormat = null, 
         int? quality = 100
     )
     {
-        return UrlWithConversion(uri.ToString(), sourceImageId, targetWidth, targetHeight, targetFormat, conversionType, quality);
+        return UrlWithConversion(uri.ToString(), sourceImageId, targetWidth, targetHeight, conversionType, targetFormat, quality);
     }
     
     public static string UrlWithConversion(
@@ -64,8 +64,8 @@ public static class ImageUrlEncoding
         string sourceImageId,
         int targetWidth, 
         int targetHeight, 
-        ImageFileFormat targetFormat = ImageFileFormat.Webp, 
         ConversionType conversionType = ConversionType.Cover,
+        ImageFileFormat? targetFormat = null, 
         int? quality = 100
     )
     {
@@ -73,8 +73,8 @@ public static class ImageUrlEncoding
             sourceImageId,
             targetWidth,
             targetHeight,
-            targetFormat,
             conversionType,
+            targetFormat,
             quality
         );
         
@@ -83,7 +83,12 @@ public static class ImageUrlEncoding
         var query = HttpUtility.ParseQueryString(url.Query);
         query[WidthParamName] = args.Width.ToString();
         query[HeightParamName] = args.Height.ToString();
-        query[FormatParamName] = args.Format.ToString().ToLower();
+        
+        if(args.TargetFormat != null)
+        {
+            query[FormatParamName] = args.TargetFormat.ToString()?.ToLower();
+        }
+        
         query[ConversionTypeParamName] = args.Type.ToString().ToLower();
         query[QualityParamName] = args.Quality.ToString();
         query[ChecksumParamName] = ChecksumFromArgs(args);
@@ -103,8 +108,23 @@ public static class ImageUrlEncoding
     
         var targetWidth = Convert.ToInt32(dictionary.GetValueOrDefault(WidthParamName).FirstOrDefault());
         var targetHeight = Convert.ToInt32(dictionary.GetValueOrDefault(HeightParamName).FirstOrDefault());
-        var targetFormat = FormatFromString(dictionary.GetValueOrDefault(FormatParamName).FirstOrDefault(), ImageFileFormat.Webp);
-        var conversionType = TypeFromString(dictionary.GetValueOrDefault(ConversionTypeParamName).FirstOrDefault(), ConversionType.Cover);
+
+        ImageFileFormat? targetFormat = null;
+        if (dictionary.TryGetValue(FormatParamName, out var value))
+        {
+            targetFormat = FormatFromString(value);
+        }
+        
+        ConversionType? conversionType = null;
+        if (dictionary.TryGetValue(ConversionTypeParamName, out value))
+        {
+            conversionType = TypeFromString(value);
+        }
+        else
+        {
+            throw new ArgumentException("Conversion type is required");
+        }
+        
         var quality = Convert.ToInt32(dictionary.GetValueOrDefault(QualityParamName).FirstOrDefault());
         var checksum = dictionary.GetValueOrDefault(ChecksumParamName).FirstOrDefault();
         
@@ -112,8 +132,8 @@ public static class ImageUrlEncoding
             sourceImageId,
             targetWidth,
             targetHeight,
+            conversionType.Value,
             targetFormat,
-            conversionType,
             quality
         )
         {
@@ -121,7 +141,7 @@ public static class ImageUrlEncoding
         };
     }
     
-    public static ImageFileFormat FormatFromString(string? format, ImageFileFormat defaultFormat)
+    public static ImageFileFormat FormatFromString(string? format)
     {
         format = format?.ToLower();
         return format switch
@@ -129,11 +149,11 @@ public static class ImageUrlEncoding
             "png" => ImageFileFormat.Png,
             "jpeg" => ImageFileFormat.Jpeg,
             "webp" => ImageFileFormat.Webp,
-            _ => defaultFormat
+            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
     }
     
-    public static ConversionType TypeFromString(string? type, ConversionType defaultType)
+    public static ConversionType TypeFromString(string? type)
     {
         type = type?.ToLower();
         return type switch
@@ -142,7 +162,7 @@ public static class ImageUrlEncoding
             "crop" => ConversionType.Crop,
             "fit" => ConversionType.Fit,
             "cover" => ConversionType.Cover,
-            _ => defaultType
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
     
@@ -165,7 +185,7 @@ public static class ImageUrlEncoding
         
         if(!isValid)
         {
-            throw new UnauthorizedAccessException("Checksum is invalid");
+            throw new InvalidChecksumException();
         }
         
         return isValid;

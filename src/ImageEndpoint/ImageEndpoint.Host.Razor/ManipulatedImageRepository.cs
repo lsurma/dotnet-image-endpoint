@@ -1,4 +1,5 @@
 ﻿using ImageEndpoint.Core;
+using FileInfo=ImageEndpoint.Core.FileInfo;
 
 namespace ImageEndpoint.Host.Razor;
 
@@ -61,4 +62,19 @@ public class FileConvertedImagesRepository : ImageRepositoryBase, IConvertedImag
             Directory.CreateDirectory(directoryPath);
         }
     }
+    
+    
+    public Task<FileInfo> GetFileInfoAsync(ImageConversionArgs args, CancellationToken cancellationToken = default)
+    {
+        var filePath = Path.Combine(_baseDirectory, GetFilePath(args));
+        
+        if (!File.Exists(filePath))
+        {
+            throw new FileNotFoundException("File not found", filePath);
+        }
+
+        var fileInfo = new FileInfo(filePath);
+        return Task.FromResult(fileInfo);
+    }
+
 }

@@ -9,8 +9,8 @@ public class ImageConversionArgs
         string sourceImageId, 
         int targetWidth, 
         int targetHeight, 
-        ImageFileFormat targetFormat, 
         ConversionType conversionType, 
+        ImageFileFormat? targetFormat = null, 
         int? quality = 100
     )
     {
@@ -37,7 +37,7 @@ public class ImageConversionArgs
         SourceImageId = sourceImageId;
         Width = targetWidth;
         Height = targetHeight;
-        Format = targetFormat;
+        TargetFormat = targetFormat;
         Type = conversionType;
         Quality = quality;
     }
@@ -48,7 +48,10 @@ public class ImageConversionArgs
     
     public int Height { get; }
     
-    public ImageFileFormat Format { get; }
+    /// <summary>
+    /// When null, the format will be the same as the source image
+    /// </summary>
+    public ImageFileFormat? TargetFormat { get; private set; }
     
     public ConversionType Type { get; }
 
@@ -67,14 +70,19 @@ public class ImageConversionArgs
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
     }
+    
+    public ImageConversionArgs SetTargetFormat(ImageFileFormat format)
+    {
+        TargetFormat = format;
+        return this;
+    }
 }
 
 public enum ImageFileFormat
 {
     Png,
     Jpeg,
-    Webp,
-    Auto
+    Webp
 }
 
 public enum ConversionType

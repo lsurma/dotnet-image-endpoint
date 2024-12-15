@@ -25,8 +25,22 @@ public class Blob : PageModel
 
         try
         {
-            var stream = await ImageConverterHandler.HandleAsync(args, cancellationToken);
-            return File(stream, ImageConversionArgs.ImageFileFormatToContentType(args.Format));
+            // Check if user supports webp
+            if(args.TargetFormat is null && HttpContext.Request.Headers.Accept.Any(x => x != null && x.Contains("image/webp")))
+            {
+                args.SetTargetFormat(ImageFileFormat.Webp);
+            }
+            
+            var result = await ImageConverterHandler.HandleAsync(args, cancellationToken);
+            
+            if(result is { Success: true, ImageResult: not null })
+            {
+                return File(result.ImageResult.Stream, ImageConversionArgs.ImageFileFormatToContentType(result.ImageResult.Format));
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         catch(Exception)
         {

@@ -1,6 +1,6 @@
 ﻿namespace ImageEndpoint.Core;
 
-public class ImageConversionException : ApplicationException
+public class ImageConversionException : ImageConverterException
 {
     public ImageConversionException() : base("An error occurred during image conversion.")
     {

@@ -3,7 +3,9 @@
 public interface IConvertedImagesRepository
 {
     Task<Stream> GetFileContentAsync(ImageConversionArgs args, CancellationToken cancellationToken = default);
-    
+
+    Task<FileInfo> GetFileInfoAsync(ImageConversionArgs args, CancellationToken cancellationToken = default);
+
     Task<bool> SaveContentAsync(Stream fileStream, ImageConversionArgs args, CancellationToken cancellationToken = default);
     
     Task<bool> DeleteAsync(ImageConversionArgs args, CancellationToken cancellationToken = default);
