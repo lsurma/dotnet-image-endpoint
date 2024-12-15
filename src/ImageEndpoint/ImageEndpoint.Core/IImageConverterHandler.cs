@@ -2,5 +2,5 @@
 
 public interface IImageConverterHandler
 {
-    Task<Stream> HandleAsync(ImageConversionArgs args, CancellationToken cancellationToken);
+    Task<ImageConverterHandlerResult> HandleAsync(ImageConversionInputArgs args, CancellationToken cancellationToken);
 }

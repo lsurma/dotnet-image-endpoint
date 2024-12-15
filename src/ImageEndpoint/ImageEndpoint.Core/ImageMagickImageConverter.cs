@@ -65,7 +65,7 @@ public class ImageMagickImageConverter : IImageConverter
     
     protected string GetTaskKey(ImageConversionArgs args)
     {
-        return $"{args.SourceImageId}_{args.Width}_{args.Height}_{args.Format}_{args.Type}";
+        return $"{args.SourceImageId}_{args.Width}_{args.Height}_{args.TargetFormat}_{args.Type}";
     }
     
     protected void ConvertImage(Stream input, Stream output, ImageConversionArgs args)
@@ -74,7 +74,7 @@ public class ImageMagickImageConverter : IImageConverter
         var type = args.Type;
         var width = args.Width;
         var height = args.Height;
-        var format = args.Format;
+        var format = args.TargetFormat;
         
         // Resize or crop based on type
         if (type == ConversionType.Crop)

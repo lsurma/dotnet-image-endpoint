@@ -20,17 +20,33 @@ public class Blob : PageModel
     
     public async Task<IActionResult> OnGetAsync()
     {
-        var args = ImageUrlEncoding.ImageConversionArgsFromUrl(Id, HttpContext.Request.Query);
-        var cancellationToken = HttpContext.RequestAborted;
-
         try
         {
-            var stream = await ImageConverterHandler.HandleAsync(args, cancellationToken);
-            return File(stream, ImageConversionArgs.ImageFileFormatToContentType(args.Format));
+            var args = ImageUrlEncoding.ImageConversionArgsFromUrl(Id, HttpContext.Request.Query);
+            var cancellationToken = HttpContext.RequestAborted;
+        
+            // Check if user supports webp
+            if(args.TargetFormat is null && HttpContext.Request.Headers.Accept.Any(x => x != null && x.Contains("image/webp")))
+            {
+                args.SetTargetFormat(ImageFileFormat.Webp);
+            }
+            
+            var result = await ImageConverterHandler.HandleAsync(args, cancellationToken);
+            
+            if(result is { Success: true, ImageResult: not null })
+            {
+                // Add cache headers 7 days
+                Response.Headers.Append("Cache-Control", "public, max-age=604800");
+                return File(result.ImageResult.Stream, ImageConversionArgs.ImageFileFormatToContentType(result.ImageResult.Format));
+            }
+            else
+            {
+                return BadRequest(result.Exception?.Message ?? "Unknown error");
+            }
         }
-        catch(Exception)
+        catch(Exception e)
         {
-            return BadRequest();
+            return BadRequest(e.Message);
         }
     }
 }

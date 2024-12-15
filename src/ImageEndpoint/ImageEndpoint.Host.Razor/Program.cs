@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<ISourceImagesRepository, LocalDiskSourceImagesRepository>();
-builder.Services.AddScoped<IConvertedImagesRepository,FileConvertedImagesRepository>();
+builder.Services.AddScoped<IConvertedImagesRepository,ConvertedImagesRepository>();
 builder.Services.AddScoped<IImageConverter,ImageMagickImageConverter>();
 builder.Services.AddScoped<IImageConverterHandler,BasicImageConverterHandler>();
 

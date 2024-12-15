@@ -1,4 +1,5 @@
 ﻿using ImageEndpoint.Core;
+using FileInfo=ImageEndpoint.Core.FileInfo;
 
 namespace ImageEndpoint.Host.Razor;
 
@@ -20,8 +21,21 @@ public class LocalDiskSourceImagesRepository : ImageRepositoryBase, ISourceImage
         }
 
         return File.OpenRead(filePath);
-    }  
+    }
     
+    public Task<FileInfo> GetFileInfoAsync(string sourceImageId, CancellationToken cancellationToken = default)
+    {
+        var filePath = Path.Combine(_baseDirectory, sourceImageId);
+        var extension = Path.GetExtension(filePath);
+        var fileInfo = new FileInfo(
+            sourceImageId,
+            ExtToFormat(extension),
+            0,
+            DateTimeOffset.Now
+        );
+        return Task.FromResult(fileInfo);
+    }
+
     public Task<bool> ExistsAsync(ImageConversionArgs args, CancellationToken cancellationToken = default)
     {
         var filePath = Path.Combine(_baseDirectory, args.SourceImageId);

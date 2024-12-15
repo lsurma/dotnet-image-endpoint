@@ -1,12 +1,13 @@
 ﻿using ImageEndpoint.Core;
+using FileInfo=ImageEndpoint.Core.FileInfo;
 
 namespace ImageEndpoint.Host.Razor;
 
-public class FileConvertedImagesRepository : ImageRepositoryBase, IConvertedImagesRepository
+public class ConvertedImagesRepository : ImageRepositoryBase, IConvertedImagesRepository
 {
     private readonly string _baseDirectory;
 
-    public FileConvertedImagesRepository(IWebHostEnvironment env)
+    public ConvertedImagesRepository(IWebHostEnvironment env)
     {
         _baseDirectory = Path.Combine(env.WebRootPath, "blobs/converted");
     }
@@ -61,4 +62,19 @@ public class FileConvertedImagesRepository : ImageRepositoryBase, IConvertedImag
             Directory.CreateDirectory(directoryPath);
         }
     }
+    
+    
+    public Task<FileInfo> GetFileInfoAsync(ImageConversionArgs args, CancellationToken cancellationToken = default)
+    {
+        var filePath = Path.Combine(_baseDirectory, args.SourceImageId);
+        var extension = Path.GetExtension(filePath);
+        var fileInfo = new FileInfo(
+            args.SourceImageId,
+            ExtToFormat(extension),
+            0,
+            DateTimeOffset.Now
+        );
+        return Task.FromResult(fileInfo);
+    }
+
 }
