@@ -73,7 +73,7 @@ public class ImageConversionArgs
         inputArgs.Width,
         inputArgs.Height,
         inputArgs.Type,
-        inputArgs.TargetFormat ?? ImageFileFormat.Webp,
+        inputArgs.TargetFormat ?? ImageFileFormat.WebP,
         inputArgs.Quality
     )
     {
@@ -134,7 +134,8 @@ public class ImageConversionArgs
         {
             ImageFileFormat.Jpeg => "image/jpeg",
             ImageFileFormat.Png => "image/png",
-            ImageFileFormat.Webp => "image/webp",
+            ImageFileFormat.WebP => "image/webp",
+            ImageFileFormat.Avif => "image/avif",
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
     }
@@ -150,7 +151,8 @@ public enum ImageFileFormat
 {
     Png,
     Jpeg,
-    Webp
+    WebP,
+    Avif
 }
 
 public enum ConversionType

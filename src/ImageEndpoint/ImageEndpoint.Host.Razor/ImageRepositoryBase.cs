@@ -35,7 +35,8 @@ public class ImageRepositoryBase
         {
             "jpg" => ImageFileFormat.Jpeg,
             "png" => ImageFileFormat.Png,
-            "webp" => ImageFileFormat.Webp,
+            "webp" => ImageFileFormat.WebP,
+            "avi" => ImageFileFormat.Avif,
             _ => throw new ArgumentOutOfRangeException(nameof(ext), ext, null)
         };
     }
@@ -46,7 +47,8 @@ public class ImageRepositoryBase
         {
             ImageFileFormat.Jpeg => ".jpg",
             ImageFileFormat.Png => ".png",
-            ImageFileFormat.Webp => ".webp",
+            ImageFileFormat.WebP => ".webp",
+            ImageFileFormat.Avif => ".avif",
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
     }

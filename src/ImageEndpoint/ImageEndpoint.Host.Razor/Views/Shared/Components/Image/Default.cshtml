@@ -1,4 +1,10 @@
 ﻿@model ImageEndpoint.Host.Razor.Views.Shared.Components.Image.ImageViewComponent
 
-<img src="@Model.SrcUrl" 
-     alt="Image" />
+<img src="@Model.MainSrc" 
+    alt="Image" 
+    width="@Model.Sizes[0].Width"
+    height="@Model.Sizes[0].Height"
+    srcset="@Model.SrcSet"
+    sizes="(max-width: 600px) 150px, 450px"
+
+/>

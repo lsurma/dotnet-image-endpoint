@@ -26,9 +26,16 @@ public class Blob : PageModel
             var cancellationToken = HttpContext.RequestAborted;
         
             // Check if user supports webp
-            if(args.TargetFormat is null && HttpContext.Request.Headers.Accept.Any(x => x != null && x.Contains("image/webp")))
+            if(args.TargetFormat is null )
             {
-                args.SetTargetFormat(ImageFileFormat.Webp);
+                if(HttpContext.Request.Headers.Accept.Any(x => x != null && x.Contains("image/avif")))
+                {
+                    args.SetTargetFormat(ImageFileFormat.Avif);
+                }
+                else if (HttpContext.Request.Headers.Accept.Any(x => x != null && x.Contains("image/webp")))
+                {
+                    args.SetTargetFormat(ImageFileFormat.WebP);
+                }
             }
             
             var result = await ImageConverterHandler.HandleAsync(args, cancellationToken);

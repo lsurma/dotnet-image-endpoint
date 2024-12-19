@@ -152,7 +152,7 @@ public static class ImageUrlEncoding
         {
             "png" => ImageFileFormat.Png,
             "jpeg" => ImageFileFormat.Jpeg,
-            "webp" => ImageFileFormat.Webp,
+            "webp" => ImageFileFormat.WebP,
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
     }

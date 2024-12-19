@@ -146,9 +146,13 @@ public class ImageMagickImageConverter : IImageConverter
             case ImageFileFormat.Png:
                 image.Format = MagickFormat.Png;
                 break;
-            case ImageFileFormat.Webp:
+            case ImageFileFormat.WebP:
                 image.Format = MagickFormat.WebP;
                 break;
+            case ImageFileFormat.Avif:
+                image.Format = MagickFormat.Avif;
+                break;
+            
             default:
                 throw new InvalidOperationException("Unsupported format");
         }
