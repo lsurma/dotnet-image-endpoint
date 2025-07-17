@@ -26,31 +26,35 @@ public class ImageRepositoryBase
     }
     
     
-    public ImageFileFormat ExtToFormat(string ext)
+    public string ExtToFormat(string ext)
     {
         ext = ext.ToLower();
         ext = ext.Replace(".", "");
         
         return ext switch
         {
-            "jpg" => ImageFileFormat.Jpeg,
-            "png" => ImageFileFormat.Png,
-            "webp" => ImageFileFormat.WebP,
-            "avi" => ImageFileFormat.Avif,
+            ImageConverterConsts.Extensions.Jpeg => ImageConverterConsts.Formats.Jpeg,
+            ImageConverterConsts.Extensions.Png => ImageConverterConsts.Formats.Png,
+            ImageConverterConsts.Extensions.WebP => ImageConverterConsts.Formats.WebP,
+            ImageConverterConsts.Extensions.Avif => ImageConverterConsts.Formats.Avif,
             _ => throw new ArgumentOutOfRangeException(nameof(ext), ext, null)
         };
+        
     }
     
-    public string FormatToExt(ImageFileFormat format)
+    public string FormatToExt(string format)
     {
-        return format switch
+        format = format.ToLower();
+        
+        format = format switch
         {
-            ImageFileFormat.Jpeg => ".jpg",
-            ImageFileFormat.Png => ".png",
-            ImageFileFormat.WebP => ".webp",
-            ImageFileFormat.Avif => ".avif",
-            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+            ImageConverterConsts.Formats.Jpeg => ImageConverterConsts.Formats.Jpeg,
+            ImageConverterConsts.Formats.Png => ImageConverterConsts.Formats.Png,
+            ImageConverterConsts.Formats.WebP => ImageConverterConsts.Formats.WebP,
+            ImageConverterConsts.Formats.Avif => ImageConverterConsts.Formats.Avif,
         };
+
+        return "." + format;
     }
 
 }

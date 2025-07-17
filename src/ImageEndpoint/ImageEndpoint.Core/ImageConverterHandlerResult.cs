@@ -14,7 +14,7 @@ public class ImageConverterHandlerResult
         Exception = exception;
     }
 
-    public ImageConverterHandlerResult(Stream stream, ImageFileFormat format)
+    public ImageConverterHandlerResult(Stream stream, string format)
     {
         Success = true;
         ImageResult = new SuccessResult(stream, format);
@@ -22,7 +22,7 @@ public class ImageConverterHandlerResult
     
     public class SuccessResult
     {
-        public SuccessResult(Stream stream, ImageFileFormat format)
+        public SuccessResult(Stream stream, string format)
         {
             Stream = stream;
             Format = format;
@@ -30,6 +30,6 @@ public class ImageConverterHandlerResult
         
         public Stream Stream { get; }
         
-        public ImageFileFormat Format { get; }
+        public string Format { get; }
     }
 }

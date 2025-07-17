@@ -9,8 +9,8 @@ public class ImageConversionInputArgs
         string sourceImageId, 
         int targetWidth, 
         int targetHeight, 
-        ConversionType conversionType, 
-        ImageFileFormat? targetFormat = null, 
+        string conversionType, 
+        string? targetFormat = null, 
         int? quality = 100
     )
     {
@@ -51,16 +51,16 @@ public class ImageConversionInputArgs
     /// <summary>
     /// When null, the format will be the same as the source image
     /// </summary>
-    public ImageFileFormat? TargetFormat { get; private set; }
+    public string? TargetFormat { get; private set; }
     
-    public ConversionType Type { get; }
+    public string Type { get; }
 
     public int? Quality { get; }
     
     [JsonIgnore]
     public string? Checksum { get; set; }
     
-    public void SetTargetFormat(ImageFileFormat format)
+    public void SetTargetFormat(string format)
     {
         TargetFormat = format;
     }
@@ -73,7 +73,7 @@ public class ImageConversionArgs
         inputArgs.Width,
         inputArgs.Height,
         inputArgs.Type,
-        inputArgs.TargetFormat ?? ImageFileFormat.WebP,
+        inputArgs.TargetFormat ?? ImageConverterConsts.Formats.Avif,
         inputArgs.Quality
     )
     {
@@ -83,8 +83,8 @@ public class ImageConversionArgs
         string sourceImageId, 
         int targetWidth, 
         int targetHeight, 
-        ConversionType conversionType, 
-        ImageFileFormat targetFormat, 
+        string conversionType, 
+        string targetFormat, 
         int? quality = 100
     )
     {
@@ -122,43 +122,27 @@ public class ImageConversionArgs
     
     public int Height { get; }
     
-    public ImageFileFormat TargetFormat { get; private set; }
+    public string TargetFormat { get; private set; }
     
-    public ConversionType Type { get; }
+    public string Type { get; }
 
     public int? Quality { get; }
     
-    public static string ImageFileFormatToContentType(ImageFileFormat format)
+    public static string ImageFileFormatToContentType(string format)
     {
         return format switch
         {
-            ImageFileFormat.Jpeg => "image/jpeg",
-            ImageFileFormat.Png => "image/png",
-            ImageFileFormat.WebP => "image/webp",
-            ImageFileFormat.Avif => "image/avif",
-            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+            ImageConverterConsts.Formats.Png => ImageConverterConsts.ContentTypes.Png,
+            ImageConverterConsts.Formats.Jpeg => ImageConverterConsts.ContentTypes.Jpeg,
+            ImageConverterConsts.Formats.WebP => ImageConverterConsts.ContentTypes.WebP,
+            ImageConverterConsts.Formats.Avif => ImageConverterConsts.ContentTypes.Avif,
+            _ => throw new ArgumentException("Invalid format", nameof(format))
         };
     }
     
-    public ImageConversionArgs SetTargetFormat(ImageFileFormat format)
+    public ImageConversionArgs SetTargetFormat(string format)
     {
         TargetFormat = format;
         return this;
     }
-}
-
-public enum ImageFileFormat
-{
-    Png,
-    Jpeg,
-    WebP,
-    Avif
-}
-
-public enum ConversionType
-{
-    Resize,
-    Crop,
-    Fit,
-    Cover
 }

@@ -2,7 +2,7 @@
 
 public record FileInfo(
     string FileName,
-    ImageFileFormat Format,
+    string Format,
     long SizeBytes,
     DateTimeOffset LastModified
 );

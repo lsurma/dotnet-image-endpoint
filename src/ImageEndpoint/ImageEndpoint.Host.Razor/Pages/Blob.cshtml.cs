@@ -28,13 +28,13 @@ public class Blob : PageModel
             // Check if user supports webp
             if(args.TargetFormat is null )
             {
-                if(HttpContext.Request.Headers.Accept.Any(x => x != null && x.Contains("image/avif")))
+                if(HttpContext.Request.Headers.Accept.Any(x => x != null && x.Contains(ImageConverterConsts.ContentTypes.Avif)))
                 {
-                    args.SetTargetFormat(ImageFileFormat.Avif);
+                    args.SetTargetFormat(ImageConverterConsts.Formats.Avif);
                 }
-                else if (HttpContext.Request.Headers.Accept.Any(x => x != null && x.Contains("image/webp")))
+                else if (HttpContext.Request.Headers.Accept.Any(x => x != null && x.Contains(ImageConverterConsts.ContentTypes.WebP)))
                 {
-                    args.SetTargetFormat(ImageFileFormat.WebP);
+                    args.SetTargetFormat(ImageConverterConsts.Formats.WebP);
                 }
             }
             

@@ -77,15 +77,15 @@ public class ImageMagickImageConverter : IImageConverter
         var format = args.TargetFormat;
         
         // Resize or crop based on type
-        if (type == ConversionType.Crop)
+        if (type == ImageConverterConsts.ConversionTypes.Crop)
         {
             image.Crop((uint)width, (uint)height, Gravity.Center);
         }
-        else if (type == ConversionType.Resize)
+        else if (type == ImageConverterConsts.ConversionTypes.Resize)
         {
             image.Resize((uint)width, (uint)height);
         }
-        else if (type == ConversionType.Fit)
+        else if (type == ImageConverterConsts.ConversionTypes.Fit)
         {
             // Resize to fit within dimensions, maintaining aspect ratio
             image.Resize(new MagickGeometry((uint)width, (uint)height)
@@ -95,7 +95,7 @@ public class ImageMagickImageConverter : IImageConverter
                 Less = true  // Ensures image fits within box
             });
         }
-        else if (type == ConversionType.Cover)
+        else if (type == ImageConverterConsts.ConversionTypes.Cover)
         {
             // Original image dimensions
             var originalWidth = image.Width;
@@ -140,16 +140,19 @@ public class ImageMagickImageConverter : IImageConverter
 
         switch (format)
         {
-            case ImageFileFormat.Jpeg:
+            case ImageConverterConsts.Formats.Jpeg:
                 image.Format = MagickFormat.Jpeg;
                 break;
-            case ImageFileFormat.Png:
+            
+            case ImageConverterConsts.Formats.Png:
                 image.Format = MagickFormat.Png;
                 break;
-            case ImageFileFormat.WebP:
+            
+            case ImageConverterConsts.Formats.WebP:
                 image.Format = MagickFormat.WebP;
                 break;
-            case ImageFileFormat.Avif:
+
+            case ImageConverterConsts.Formats.Avif:
                 image.Format = MagickFormat.Avif;
                 break;
             

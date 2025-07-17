@@ -14,7 +14,7 @@
 
 <br />
 
-<img width="200" height="200" src="@("https://localhost:7117/blob/example.jpg".WithImgConversion(200, 200, conversionType: ConversionType.Resize))" alt="Example image"/>
+<img width="200" height="200" src="@("https://localhost:7117/blob/example.jpg".WithImgConversion(200, 200, conversionType: ImageConverterConsts.ConversionTypes.Resize))" alt="Example image"/>
 
 <br />
 <img width="200" height="200" src="@("https://localhost:7117/blob/example.jpg".WithImgConversion(200, 200))" alt="Example image"/>
@@ -28,4 +28,3 @@
 
 <img width="200" height="100" src="@("https://localhost:7117/blob/example.jpg".WithImgConversion(1000, 1000))" alt="Example image"/>
 
-<vc:image src="example.jpg" sizes="@([(350, 350), (150, 150), (50, 50)])"></vc:image>

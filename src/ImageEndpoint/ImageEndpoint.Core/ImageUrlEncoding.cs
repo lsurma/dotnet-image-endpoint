@@ -21,8 +21,8 @@ public static class ImageUrlEncoding
         this string currentUrl, 
         int targetWidth, 
         int targetHeight, 
-        ConversionType conversionType = ConversionType.Cover,
-        ImageFileFormat? targetFormat = null, 
+        string conversionType = ImageConverterConsts.ConversionTypes.Default,
+        string? targetFormat = null, 
         int? quality = 100
     )
     {
@@ -38,8 +38,8 @@ public static class ImageUrlEncoding
         string sourceImageId,
         int targetWidth, 
         int targetHeight, 
-        ConversionType conversionType = ConversionType.Cover,
-        ImageFileFormat? targetFormat = null, 
+        string conversionType = ImageConverterConsts.ConversionTypes.Default,
+        string? targetFormat = null, 
         int? quality = 100
     )
     {
@@ -51,8 +51,8 @@ public static class ImageUrlEncoding
         string sourceImageId,
         int targetWidth, 
         int targetHeight, 
-        ConversionType conversionType = ConversionType.Cover,
-        ImageFileFormat? targetFormat = null, 
+        string conversionType = ImageConverterConsts.ConversionTypes.Default,
+        string? targetFormat = null, 
         int? quality = 100
     )
     {
@@ -64,8 +64,8 @@ public static class ImageUrlEncoding
         string sourceImageId,
         int targetWidth, 
         int targetHeight, 
-        ConversionType conversionType = ConversionType.Cover,
-        ImageFileFormat? targetFormat = null, 
+        string conversionType = ImageConverterConsts.ConversionTypes.Default,
+        string? targetFormat = null, 
         int? quality = 100
     )
     {
@@ -109,18 +109,19 @@ public static class ImageUrlEncoding
         var targetWidth = Convert.ToInt32(dictionary.GetValueOrDefault(WidthParamName).FirstOrDefault());
         var targetHeight = Convert.ToInt32(dictionary.GetValueOrDefault(HeightParamName).FirstOrDefault());
 
-        ImageFileFormat? targetFormat = null;
+        string? targetFormat = null;
         if (dictionary.TryGetValue(FormatParamName, out var value))
         {
-            targetFormat = FormatFromString(value);
+            targetFormat = value.FirstOrDefault();
         }
         
-        ConversionType? conversionType = null;
+        string? conversionType = null;
         if (dictionary.TryGetValue(ConversionTypeParamName, out value))
         {
-            conversionType = TypeFromString(value);
+            conversionType = value.FirstOrDefault();
         }
-        else
+        
+        if(conversionType == null)
         {
             throw new ArgumentException("Conversion type is required");
         }
@@ -132,7 +133,7 @@ public static class ImageUrlEncoding
             sourceImageId,
             targetWidth,
             targetHeight,
-            conversionType.Value,
+            conversionType,
             targetFormat,
             quality
         )
@@ -145,30 +146,6 @@ public static class ImageUrlEncoding
         return input;
     }
     
-    public static ImageFileFormat FormatFromString(string? format)
-    {
-        format = format?.ToLower();
-        return format switch
-        {
-            "png" => ImageFileFormat.Png,
-            "jpeg" => ImageFileFormat.Jpeg,
-            "webp" => ImageFileFormat.WebP,
-            _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
-        };
-    }
-    
-    public static ConversionType TypeFromString(string? type)
-    {
-        type = type?.ToLower();
-        return type switch
-        {
-            "resize" => ConversionType.Resize,
-            "crop" => ConversionType.Crop,
-            "fit" => ConversionType.Fit,
-            "cover" => ConversionType.Cover,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
-    }
     
     public static string ChecksumFromArgs(ImageConversionInputArgs args)
     {
