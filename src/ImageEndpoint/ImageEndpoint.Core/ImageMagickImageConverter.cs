@@ -37,13 +37,25 @@ public class ImageMagickImageConverter : IImageConverter
             try
             {
                 await using var sourceStream = await SourceImagesRepository.GetFileContentAsync(args, cancellationToken);
-                await using var destinationStream = new MemoryStream();
+                var tempFilePath = Path.GetTempFileName();
                 
-                ConvertImage(sourceStream, destinationStream, args);
-                
-                destinationStream.Position = 0;
-                await ConvertedImagesRepository.SaveContentAsync(destinationStream, args, cancellationToken);
-                return ImageConversionResult.SuccessResult;
+                try
+                {
+                    await using var destinationStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.ReadWrite);
+                    ConvertImage(sourceStream, destinationStream, args);
+                    destinationStream.Position = 0;
+                    await ConvertedImagesRepository.SaveContentAsync(destinationStream, args, cancellationToken);
+
+                    await destinationStream.FlushAsync(cancellationToken);
+                    return ImageConversionResult.SuccessResult;
+                }
+                finally
+                {
+                    if (File.Exists(tempFilePath))
+                    {
+                        File.Delete(tempFilePath);
+                    }
+                }
             }
             catch (Exception ex)
             {
